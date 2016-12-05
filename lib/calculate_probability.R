@@ -34,9 +34,11 @@ probability_ad_id_given_feature<-function(variable_name)
   row_length<-length(unique_value)
   probability_matrix<-matrix(data=0,nrow=row_length,ncol=478950)
   count<-1
+  col_num<-match(variable_name,colnames(train_data_for_Probability_ad_id_given_feature))
   for(i in unique_value)
   {
-    data_part<-train_data_for_Probability_ad_id_given_feature %>% filter(variable_name==i)
+    data_part<-train_data_for_Probability_ad_id_given_feature %>% 
+               filter(train_data_for_Probability_ad_id_given_feature[,col_num]==i)
     ad_id_recommend_count<-data_part %>% group_by(ad_id)%>% summarise(count_num=n())
     ad_id_clicked_count<-data_part %>% group_by(ad_id)%>% summarise(count_num=sum(clicked))
     shresh<-quantile(ad_id_recommend_count$count_num,probs = c(0.75))
@@ -55,7 +57,7 @@ probability_ad_id_given_feature<-function(variable_name)
 
 ###
 category_result<-probability_ad_id_given_feature('category_id')
-topic_result<-probability_ad_id_given_feature('topic_id')
+   topic_result<-probability_ad_id_given_feature('topic_id')
 publisher_result<-probability_ad_id_given_feature('publisher_id')
 #source_result<-probability_ad_id_given_feature('source_id')
 
@@ -63,3 +65,5 @@ publisher_result<-probability_ad_id_given_feature('publisher_id')
 save(category_result,file='category_result.RData')
 save(topic_result,file='topic_result.RData')
 save(publisher_result,file='publisher_result.RData')
+save(unique_ad,file='unique_ad.RData')
+
